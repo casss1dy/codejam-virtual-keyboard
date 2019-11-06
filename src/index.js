@@ -23,7 +23,7 @@ const Keyboard = {
 
     this.elements.keys = this.elements.keysContainer.querySelectorAll('.keyboard__key');
 
-    // анимация клавиш
+    // анимация
     this.elements.keysContainer.addEventListener('click', (event) => {
       this.keyAnimate(this.mouseDown(event));
     });
@@ -74,7 +74,6 @@ const Keyboard = {
       ['Digit9', '9'],
       ['Digit0', '0'],
       ['Backspace', 'backspace'],
-      // ['Tab', 'tab'],
       ['KeyQ', 'q'],
       ['KeyW', 'w'],
       ['KeyE', 'e'],
@@ -85,7 +84,6 @@ const Keyboard = {
       ['KeyI', 'i'],
       ['KeyO', 'o'],
       ['KeyP', 'p'],
-      ['CapsLock', 'caps'],
       ['KeyA', 'a'],
       ['KeyS', 's'],
       ['KeyD', 'd'],
