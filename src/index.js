@@ -1,50 +1,47 @@
 import './style.css';
 
-const Keybl = {
+const Keyboard = {
   elements: {
     input: null,
     keysContainer: null,
-    keys: []
+    keys: [],
   },
 
   properties: {
-    text: "",
-    capsLock: false
+    text: '',
+    capsLock: false,
   },
 
-  init()  {
+  init() {
     this.elements.input = document.createElement('textarea');
     this.elements.input.classList.add('input');
 
 
     this.elements.keysContainer = document.createElement('div');
     this.elements.keysContainer.classList.add('keyboard');
-    this.elements.keysContainer.append(...this._createKeys());
+    this.elements.keysContainer.append(...this.createKeys());
 
-    this.elements.keys = this.elements.keysContainer.querySelectorAll(".keyboard__key");
+    this.elements.keys = this.elements.keysContainer.querySelectorAll('.keyboard__key');
 
     // анимация клавиш
     this.elements.keysContainer.addEventListener('click', (event) => {
       this.keyAnimate(this.mouseDown(event));
     });
     document.addEventListener('keydown', (event) => {
-      this.keyAnimate(this.keyDown(event))
+      this.keyAnimate(this.keyDown(event));
     });
 
     document.body.append(this.elements.input, this.elements.keysContainer);
   },
 
-  handler() {
-
-  },
-
   keyDown(event) {
-    let key = document.getElementById(event.code);
+    const key = document.getElementById(event.code);
     this.elements.input.focus();
-    this.elements.input.selectionStart = this.elements.input.selectionEnd = this.elements.input.value.length;
+    this.elements.input.selectionStart = this.elements.input.value.length;
+    this.elements.input.selectionStart = this.elements.input.selectionEnd;
 
     if (event.code === 'CapsLock') {
-      this._toggleCapsLock(key);
+      this.toggleCapsLock(key);
     }
     return key;
   },
@@ -55,15 +52,15 @@ const Keybl = {
   },
 
   keyAnimate(key) {
-
     if (!key || key.getAttribute('id') === 'CapsLock') return false;
 
     key.classList.toggle('keyboard__key_active');
     setTimeout(() => key.classList.toggle('keyboard__key_active'), 500);
+
+    return false;
   },
 
-  _createKeys() {
-
+  createKeys() {
     const fragment = [];
     const keyLayout = [
       ['Digit1', '1'],
@@ -110,49 +107,43 @@ const Keybl = {
       ['Comma', ','],
       ['Period', '.'],
       ['Space', 'space'],
-/*      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
-      "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
-      "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", "enter",
-      "shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "?",
-      "space"*/
     ];
 
-    keyLayout.forEach(e => {
+    keyLayout.forEach((e) => {
       const isNewLine = ['backspace', 'p', 'enter', '.'].indexOf(e[1]) !== -1;
-      let key = document.createElement('button');
+      const key = document.createElement('button');
       key.classList.add('keyboard__key');
-      key.id = e[0];
-      key.textContent = e[1];
+      [key.id, key.textContent] = e;
 
       switch (e[1]) {
-        case "caps":
-          key.addEventListener("click", () => {
-            this._toggleCapsLock(key);
+        case 'caps':
+          key.addEventListener('click', () => {
+            this.toggleCapsLock(key);
           });
           break;
-        case "space":
+        case 'space':
           key.classList.add('keyboard__key_extra-wide');
-          key.addEventListener("click", () => {
+          key.addEventListener('click', () => {
             this.printKey(' ');
           });
           break;
-        case "backspace":
-          key.addEventListener("click", () => {
+        case 'backspace':
+          key.addEventListener('click', () => {
             this.printKey('backspace');
           });
           break;
-        case "enter":
-          key.addEventListener("click", () => {
+        case 'enter':
+          key.addEventListener('click', () => {
             this.printKey('\r\n');
           });
           break;
-        case "tab":
-          key.addEventListener("click", () => {
+        case 'tab':
+          key.addEventListener('click', () => {
             this.printKey('\t');
           });
           break;
         default:
-          key.addEventListener("click", () => {
+          key.addEventListener('click', () => {
             this.printKey(this.properties.capsLock ? e[1].toUpperCase() : e[1].toLowerCase());
           });
       }
@@ -162,44 +153,32 @@ const Keybl = {
     });
 
     return fragment;
-
   },
 
-  _triggerEvent(handlerName) {
-
-  },
-
-  _toggleCapsLock(key) {
-    key.classList.toggle("keyboard__key_active");
+  toggleCapsLock(key) {
+    key.classList.toggle('keyboard__key_active');
     this.properties.capsLock = !this.properties.capsLock;
 
-    for (const key of this.elements.keys) {
-      if (key.childElementCount === 0 && key.textContent.length === 1) {
-        key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+    Object.keys(this.elements.keys).forEach((i) => {
+      const keyElem = this.elements.keys[i];
+      if (keyElem.childElementCount === 0 && keyElem.textContent.length === 1) {
+        keyElem.textContent = this.properties.capsLock
+          ? keyElem.textContent.toUpperCase() : keyElem.textContent.toLowerCase();
       }
-    }
+    });
   },
 
   printKey(key) {
-    let input = this.elements.input;
-/*    let input = this.elements.input,
-        from = input.selectionStart,
-        to = input.selectionEnd;
-
-    input.value = input.value.slice(0, from) + key + input.value.slice(to);
-    input.selectionStart = input.selectionEnd = from + key.length;*/
-    // console.log(key);
+    const { input } = this.elements;
     if (key === 'backspace') {
-      input.value = input.value.substring(0, input.value.length - 1);;
+      input.value = input.value.substring(0, input.value.length - 1);
     } else {
-      input.value = input.value + key;
+      input.value += key;
     }
-    // this.elements.input.focus();
-    // console.log(this.elements.input);
-  }
+  },
 
 };
 
-window.addEventListener("DOMContentLoaded", function () {
-  Keybl.init();
+window.addEventListener('DOMContentLoaded', () => {
+  Keyboard.init();
 });
